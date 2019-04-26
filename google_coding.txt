@@ -1,0 +1,81 @@
+# encoding=utf-8
+# 导入爬虫包
+from selenium import webdriver
+# 睡眠时间
+import time
+import os
+# 打开编码方式utf-8打开
+
+# 睡眠时间 传入int为休息时间，页面加载和网速的原因 需要给网页加载页面元素的时间
+def s(int):
+    time.sleep(int)
+
+
+# html/body/div[1]/table/tbody/tr[2]/td[1]/input
+# http://dmfy.emindsoft.com.cn/common/toDoubleexamp.do
+
+if __name__ == '__main__':
+    #查询的文件位置
+    fR = open('D:\\testFile\\11.txt','r',encoding = 'utf-8')
+
+    # 模拟浏览器，使用谷歌浏览器，将chromedriver.exe复制到谷歌浏览器的文件夹内
+    chromedriver = "C:\\Users\\Administrator\\AppData\\Local\\Google\\Chrome\\Application\\chromedriver.exe"
+    # 设置浏览器
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    browser = webdriver.Chrome(chromedriver)
+    # 最大化窗口 用不用都行
+    browser.maximize_window()
+    # 要爬取的网页
+    browser.get(u'https://translate.google.cn/')
+    # 休息时间
+    s(3)
+    # fileObject = codecs.open("F:\\testFile\\google.txt",'a','utf8')
+    # browser.find_element_by_xpath('//*[@id="tabexamp"]').click()
+    # browser.find_element_by_id('keyword').click()  #container > div:nth-child(3)
+    # 通过xpath获取要点击的信息，比如：选项、翻页等
+    # browser.find_element_by_xpath('//*[@id="lang3"]').click()
+    # 通过xpath获取要塞入的文本信息，例如搜索
+    circle = 2910
+    c_x = 0
+    #fileObject = open('D:\\testFile\\googlehaha.txt', 'a', encoding='utf8')
+    for word in fR.readlines():
+
+        if c_x <= circle:
+            c_x += 1
+            continue
+        word = word.strip()
+        print(word)
+        browser.find_element_by_xpath('//*[@id="sugg-item-zh-CN"]').click()
+        browser.find_element_by_xpath('//*[@id="source"]').clear()
+        // *[ @ id = "gt-submit"]
+        browser.find_element_by_xpath('//*[@id="source"]').send_keys(word)
+        browser.find_element_by_xpath('//*[@id="gt-tl-gms"]').click()
+        browser.find_element_by_xpath('//*[@id=":4e"]/div').click()
+
+        browser.find_element_by_xpath('//*[@id="gt-submit"]').click()
+        s(1)
+        # page_info = browser.find_element_by_css_selector('#container').find_elements_by_tag_name('div')
+        try:
+            # 通过xpath获取,获取目标数据
+            neirongs = browser.find_element_by_xpath('//*[@id="gt-res-dir-ctr"]').text
+            # print neirongs
+        except Exception:
+            # browser.close()
+            s(2)
+            browser.get(u'https://translate.google.cn/')
+            s(3)
+            continue
+        print(neirongs)
+        print(c_x)
+        # 解析页面信
+
+        #保存的数据位置
+        fileObject = open('D:\\testFile\\google11.txt', 'a', encoding='utf8')
+        # fileObject = codecs.open('F:\\data-destop\\最新的工作 2018-10-10\\爬虫程序\\data\\wenjian.txt",'a','utf8')
+        fileObject.write(word + "_" + neirongs + "\r\n")
+        #fileObject.flush()
+        c_x += 1
+        fileObject.close()
+
+
+
